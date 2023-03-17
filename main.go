@@ -6,7 +6,8 @@ import (
 
 	"Wiggumize/cli"
 	"Wiggumize/internal/parser"
-	"Wiggumize/internal/passive"
+	"Wiggumize/internal/proxy"
+	// "Wiggumize/internal/passive"
 )
 
 func main() {
@@ -30,32 +31,36 @@ func main() {
 	// fmt.Println(b)
 	// fmt.Println(m)
 
-	for _, item := range filteredXML.ItemElements {
+	// for _, item := range filteredXML.ItemElements {
 
-		// if bool(item.Request.Base64) {
-		// 	// item.Response.Value = parser.B64Decode(item.Response.Value)
-		// 	fmt.Println(parser.B64Decode(item.Response.Value))
-		// }
+	// 	// if bool(item.Request.Base64) {
+	// 	// 	// item.Response.Value = parser.B64Decode(item.Response.Value)
+	// 	// 	fmt.Println(parser.B64Decode(item.Response.Value))
+	// 	// }
 
-		// fmt.Println(item.Response.Value)
-		s := parser.B64Decode(item.Response.Value)
+	// 	// fmt.Println(item.Response.Value)
+	// 	s := parser.B64Decode(item.Response.Value)
 
-		matched, match := passive.Find(s)
-		//TODO: refactor this
-		if matched {
-			for _, m := range match {
-				fmt.Println("======FOUND SECRET========================")
-				fmt.Printf("Description: %s\n", m.Description)
-				fmt.Print("Value: ")
-				fmt.Println(m.MatchingString)
-				fmt.Printf("URL: %s\n", item.URL)
-				// fmt.Println("WHole Responce:")
-				// fmt.Println(s)
-				fmt.Println("======================================")
-			}
-		}
+	// 	matched, match := passive.Find(s)
+	// 	//TODO: refactor this
+	// 	if matched {
+	// 		for _, m := range match {
+	// 			fmt.Println("======FOUND SECRET========================")
+	// 			fmt.Printf("Description: %s\n", m.Description)
+	// 			fmt.Print("Value: ")
+	// 			fmt.Println(m.MatchingString)
+	// 			fmt.Printf("URL: %s\n", item.URL)
+	// 			// fmt.Println("WHole Responce:")
+	// 			// fmt.Println(s)
+	// 			fmt.Println("======================================")
+	// 		}
+	// 	}
 
-	}
+	// }
+
+	var proxyIntance *proxy.Proxy
+	proxyIntance = &proxy.Proxy{}
+	proxyIntance.Start(1337)
 
 }
 

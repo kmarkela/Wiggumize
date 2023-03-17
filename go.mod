@@ -6,6 +6,7 @@ require github.com/AlecAivazis/survey/v2 v2.3.6
 
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
+	github.com/elazarl/goproxy v0.0.0-20221015165544-a0805db90819 // indirect
 	github.com/emirpasic/gods v1.12.0 // indirect
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/golang/protobuf v1.2.0 // indirect
