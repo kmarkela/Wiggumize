@@ -1,14 +1,3 @@
-// I need an http/https proxy written in go.
-// It should support HTTP and HTTPS connections. HTTPS connections should be decrypted as Man in the middle (decrypt connection to the server and reencrypt connection to a client with own certificate).
-// It should be possible to specify certificate and key.
-// All requests and responses (in single struct) should be passed to separate function for analisy. Also, there should be possibility to specify upstream proxy.
-// it must be multithreaded to support a lot of symulteniose connections
-// the structure of the code should folowing:
-// Start function - start listening for connections, fore each new connection starts separate rutine with hanldler function;
-// hanldler function - stores req in memory, checks if connection is https or http. if https runs forwardHTTPS, else run forwardHTTP. Once response recived, run Analys function with request and response
-// forwardHTTPS - esteblishes 2 TLS connections: one to client (with own certifacate) and 1 to the destanation server (man in the middle attack). forward the reuqest to the destanation. returns responce to hanldler
-// forwardHTTP - forward the reuqest to the destanation. returns responce to hanldler.
-// Give me code forwardHTTPS
 package proxy
 
 import (
