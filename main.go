@@ -59,7 +59,7 @@ func main() {
 	// }
 
 	var proxyIntance *proxy.Proxy
-	proxyIntance = &proxy.Proxy{}
+	proxyIntance = &proxy.Proxy{UpstreamProxy: "http://127.0.0.1:8080"}
 	proxyIntance.Start(1337)
 
 }

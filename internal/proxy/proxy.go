@@ -1,9 +1,20 @@
+// I need an http/https proxy written in go.
+// It should support HTTP and HTTPS connections. HTTPS connections should be decrypted as Man in the middle (decrypt connection to the server and reencrypt connection to a client with own certificate).
+// It should be possible to specify certificate and key.
+// All requests and responses (in single struct) should be passed to separate function for analisy. Also, there should be possibility to specify upstream proxy.
+// it must be multithreaded to support a lot of symulteniose connections
+// the structure of the code should folowing:
+// Start function - start listening for connections, fore each new connection starts separate rutine with hanldler function;
+// hanldler function - stores req in memory, checks if connection is https or http. if https runs forwardHTTPS, else run forwardHTTP. Once response recived, run Analys function with request and response
+// forwardHTTPS - esteblishes 2 TLS connections: one to client (with own certifacate) and 1 to the destanation server (man in the middle attack). forward the reuqest to the destanation. returns responce to hanldler
+// forwardHTTP - forward the reuqest to the destanation. returns responce to hanldler.
+// Give me code forwardHTTPS
 package proxy
 
 import (
 	"bufio"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -38,17 +49,12 @@ type Proxy struct {
 	History  *ProxyHistory
 }
 
-type RequestResponse struct {
-	Request  *http.Request
-	Response *http.Response
-}
-
-func (p *Proxy) populateHistory(r *RequestResponse) {
-	log.Printf("Request: %+v\n", r.Request)
-	log.Printf("Response: %+v\n", r.Response)
+func (p *Proxy) populateHistory(req *http.Request, res *http.Response) {
+	log.Printf("Request: %+v\n", req)
+	log.Printf("Response: %+v\n", res)
 
 	// Read the response body
-	body, err := io.ReadAll(r.Response.Body)
+	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		log.Printf("Error reading response body: %s\n", err)
 	} else {
@@ -99,23 +105,24 @@ func (p *Proxy) handleConnection(conn net.Conn) {
 	// Check if the request is HTTPS
 	if req.Method == http.MethodConnect {
 		log.Printf("HTTPS")
+		// p.handleHTTPSRequest(conn, req)
 	} else {
-		res, err := p.forwardHTTP(req, &conn)
+		err := p.forwardHTTP(req, &conn)
 		if err != nil {
 			log.Println("Error forwarding HTTP request:", err)
 			return
 		}
-		p.populateHistory(&RequestResponse{req, res})
+
 	}
 }
 
-func (p *Proxy) forwardHTTP(req *http.Request, conn *net.Conn) (*http.Response, error) {
+func (p *Proxy) forwardHTTP(req *http.Request, conn *net.Conn) error {
 	var client *http.Client
 
 	if p.UpstreamProxy != "" {
 		proxyUrl, err := url.Parse(p.UpstreamProxy)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		transport := &http.Transport{Proxy: http.ProxyURL(proxyUrl)}
@@ -127,34 +134,108 @@ func (p *Proxy) forwardHTTP(req *http.Request, conn *net.Conn) (*http.Response, 
 	// TODO: error handling
 	res, err := client.Do(req)
 	if err != nil {
-		return nil, err
-	}
-	// defer res.Body.Close()
-
-	// Write the response headers to the client
-	writer := bufio.NewWriter(*conn)
-	if err := res.Write(writer); err != nil {
-		log.Println("Error writing response headers:", err)
-		return res, err
+		return err
 	}
 
-	// Write the response body to the client
-	if _, err := io.Copy(writer, res.Body); err != nil {
-		log.Println("Error writing response body:", err)
-		return res, err
-	}
-
-	// // Close the response body after all data has been copied to the client
-	// if err := res.Body.Close(); err != nil {
-	// 	log.Println("Error closing response body:", err)
-	// 	return res, err
-	// }
-
-	// Flush the writer to ensure all data is sent to the client
-	if err := writer.Flush(); err != nil {
-		log.Println("Error flushing writer:", err)
-		return res, err
-	}
-
-	return res, nil
+	p.populateHistory(req, res)
+	res.Write(*conn)
+	return nil
 }
+
+// func (p *Proxy) handleHTTPSRequest(conn net.Conn, req *http.Request) {
+// 	host, _, err := net.SplitHostPort(req.Host)
+// 	if err != nil {
+// 		log.Println("Error splitting host and port:", err)
+// 		return
+// 	}
+
+// 	// Generate a new self-signed certificate
+// 	cert, err := p.generateSelfSignedCert(host)
+// 	if err != nil {
+// 		log.Println("Error generating certificate:", err)
+// 		return
+// 	}
+
+// 	// Set up the TLS configuration for the server
+// 	config := &tls.Config{
+// 		Certificates: []tls.Certificate{cert},
+// 		ClientAuth:   tls.NoClientCert,
+// 	}
+
+// 	// Send a 200 OK response to the client to establish the SSL connection
+// 	conn.Write([]byte("HTTP/1.1 200 OK\r\n\r\n"))
+
+// 	// Create a new TLS connection with the client and the server
+// 	tlsConn := tls.Server(conn, config)
+// 	err = tlsConn.Handshake()
+// 	if err != nil {
+// 		log.Println("Error performing TLS handshake with client:", err)
+// 		return
+// 	}
+
+// 	// Create a new request using the TLS connection
+// 	req = &http.Request{
+// 		Method: http.MethodConnect,
+// 		Host:   req.Host,
+// 	}
+
+// 	// Connect to the server using the TLS connection
+// 	serverConn, err := net.Dial("tcp", req.Host)
+// 	if err != nil {
+// 		log.Println("Error connecting to server:", err)
+// 		return
+// 	}
+// 	defer serverConn.Close()
+
+// 	// Set up the TLS configuration for the server
+// 	serverConfig := &tls.Config{
+// 		ServerName: host,
+// 	}
+
+// 	// Create a new TLS connection with the server
+// 	serverTLSConn := tls.Client(serverConn, serverConfig)
+// 	err = serverTLSConn.Handshake()
+// 	if err != nil {
+// 		log.Println("Error performing TLS handshake with server:", err)
+// 		return
+// 	}
+
+// 	// Forward data between the client and the server
+// 	go io.Copy(serverTLSConn, tlsConn)
+// 	io.Copy(tlsConn, serverTLSConn)
+// }
+
+// func (p *Proxy) generateSelfSignedCert(host string) (tls.Certificate, error) {
+// 	// Generate a new private key
+// 	key, err := rsa.GenerateKey(rand.Reader, 2048)
+// 	if err != nil {
+// 		return tls.Certificate{}, err
+// 	}
+
+// 	// Create a self-signed certificate template
+// 	template := x509.Certificate{
+// 		SerialNumber:          big.NewInt(1),
+// 		Subject:               pkix.Name{CommonName: host},
+// 		NotBefore:             time.Now(),
+// 		NotAfter:              time.Now().Add(time.Hour * 24 * 365),
+// 		BasicConstraintsValid: true,
+// 	}
+
+// 	// Create the certificate using the private key and the template
+// 	derBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, &key.PublicKey, key)
+// 	if err != nil {
+// 		return tls.Certificate{}, err
+// 	}
+
+// 	// Encode the certificate and the private key in PEM format
+// 	certPEM := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: derBytes})
+// 	keyPEM := pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(key)})
+
+// 	// Create the TLS certificate using the certificate and the private key
+// 	tlsCert, err := tls.X509KeyPair(certPEM, keyPEM)
+// 	if err != nil {
+// 		return tls.Certificate{}, err
+// 	}
+
+// 	return tlsCert, nil
+// }
