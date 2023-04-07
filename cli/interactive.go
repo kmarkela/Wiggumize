@@ -1,10 +1,12 @@
 package cli
 
 import (
+	"Wiggumize/utils"
+
 	"github.com/AlecAivazis/survey/v2"
 )
 
-func Checkboxes(label string, opts []string) []string {
+func Checkboxes(label string, opts []string) utils.Set {
 	res := []string{}
 	prompt := &survey.MultiSelect{
 		Message:  label,
@@ -13,5 +15,10 @@ func Checkboxes(label string, opts []string) []string {
 	}
 	survey.AskOne(prompt, &res)
 
-	return res
+	hostSet := utils.Set{}
+	for _, item := range res {
+		hostSet.Add(item)
+	}
+
+	return hostSet
 }

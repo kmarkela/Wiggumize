@@ -21,3 +21,8 @@ func (p *Parameters) Parse() {
 		os.Exit(1)
 	}
 }
+
+func (p *Parameters) Usage() {
+	// Expose Usage
+	flag.Usage()
+}

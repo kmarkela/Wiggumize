@@ -1,11 +1,9 @@
 package parser
 
 import (
-	"Wiggumize/utils"
+	"encoding/base64"
 	"encoding/xml"
 	"io/ioutil"
-	"net"
-	"net/url"
 )
 
 // XMLParser is a struct that represents the XML parser.
@@ -45,9 +43,31 @@ type Request struct {
 	Value  string `xml:",chardata"`
 }
 
+func (r Request) decodeBase64() string {
+
+	// Return if not encoded
+	if !r.Base64 {
+		return r.Value
+	}
+
+	stringBytes, _ := base64.StdEncoding.DecodeString(r.Value)
+	return string(stringBytes)
+}
+
 type Response struct {
 	Base64 bool   `xml:"base64,attr"`
 	Value  string `xml:",chardata"`
+}
+
+func (r Response) decodeBase64() string {
+
+	// Return if not encoded
+	if !r.Base64 {
+		return r.Value
+	}
+
+	stringBytes, _ := base64.StdEncoding.DecodeString(r.Value)
+	return string(stringBytes)
 }
 
 // Parse is a method that parses an XML file.
@@ -66,41 +86,31 @@ func (p *XMLParser) Parse(filename string) error {
 	return nil
 }
 
-// return list of uniq
-func (p *XMLParser) ListOfHosts() []string {
-	set := &utils.Set{}
+func (p *XMLParser) PopulateHistory(file string, history *BrowseHistory) error {
+	// Parsing XML history and populating BrowseHistory struct
+
+	// Parser XML file and polulate XMLParser
+	err := p.Parse(file)
+	if err != nil {
+		return err
+	}
+
+	// Populate BrowseHistory
 	for _, item := range p.ItemElements {
-		s := item.Protocol + "://" + item.Host.Value + ":" + item.Port
-		set.Add(s)
+		host := item.Protocol + "://" + item.Host.Value + "" + item.Port
+		history.RequestsList = append(history.RequestsList, HistoryItem{
+			Time:     item.Time,
+			URL:      item.URL,
+			Host:     host,
+			Path:     item.Path,
+			Method:   item.Method,
+			Request:  item.Request.decodeBase64(),
+			Status:   item.Status,
+			MimeType: item.MimeType,
+			Response: item.Response.decodeBase64(),
+		})
+		history.ListOfHosts.Add(host)
 
 	}
-
-	return set.Keys()
-}
-
-type hostSt struct {
-	protocol string
-	host     string
-	port     string
-}
-
-func (p *XMLParser) FilterByHost(URLs []string) {
-	filteredItems := []Item{}
-
-	parsedHosts := []hostSt{}
-	for _, URL := range URLs {
-		u, _ := url.Parse(URL)
-		host, port, _ := net.SplitHostPort(u.Host)
-		parsedHosts = append(parsedHosts, hostSt{u.Scheme, host, port})
-	}
-
-	for _, item := range p.ItemElements {
-		for _, host := range parsedHosts {
-			if item.Host.Value == host.host && item.Port == host.port && item.Protocol == host.protocol {
-				filteredItems = append(filteredItems, item)
-				break
-			}
-		}
-	}
-	p.ItemElements = filteredItems
+	return nil
 }

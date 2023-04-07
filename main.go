@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"os"
 
 	"Wiggumize/cli"
 	"Wiggumize/internal/parser"
 	"Wiggumize/internal/passive"
+	"Wiggumize/utils"
 )
 
 func main() {
@@ -19,18 +19,37 @@ func main() {
 	// Print Greatings
 	cli.Greet()
 
-	// TODO: normalisations. shoudl be watever XML/API
-	// Filter XML
-	var filteredXML *parser.XMLParser
-	filteredXML = xmlProcess(params)
-	fmt.Println(len(filteredXML.ItemElements))
+	// ##########
+	// Parse Data
+	// ##########
+	var browseHistory *parser.BrowseHistory
+	browseHistory = &parser.BrowseHistory{
+		RequestsList: []parser.HistoryItem{},
+		ListOfHosts:  utils.Set{},
+	}
 
-	// test := "test"
-	// m, b := passive.Find(test)
-	// fmt.Println(b)
-	// fmt.Println(m)
+	// futureprofing. will be in use in v2 .
+	switch {
+	case params.FilePath != "":
+		XMLParser := parser.XMLParser{}
+		err := XMLParser.PopulateHistory(params.FilePath, browseHistory)
+		if err != nil {
+			//TODO: add proper logging
+			fmt.Println(err)
+			return
+		}
+	// case params.Proxy
+	// case params.API
+	default:
+		// Should never happen
+		params.Usage()
+		panic("Can't parse CLI parameters")
+	}
 
-	for _, item := range filteredXML.ItemElements {
+	selectedHosts := cli.Checkboxes("Choose hosts os your interest:", browseHistory.ListOfHosts.Keys())
+	browseHistory.FilterByHost(selectedHosts)
+
+	for _, item := range browseHistory.RequestsList {
 
 		// if bool(item.Request.Base64) {
 		// 	// item.Response.Value = parser.B64Decode(item.Response.Value)
@@ -38,9 +57,7 @@ func main() {
 		// }
 
 		// fmt.Println(item.Response.Value)
-		s := parser.B64Decode(item.Response.Value)
-
-		matched, match := passive.Find(s)
+		matched, match := passive.Find(item.Response)
 		//TODO: refactor this
 		if matched {
 			for _, m := range match {
@@ -59,22 +76,22 @@ func main() {
 
 }
 
-func xmlProcess(params *cli.Parameters) *parser.XMLParser {
-	// Parse XML
-	xmlParser := &parser.XMLParser{}
-	err := xmlParser.Parse(params.FilePath)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error parsing XML file: %v\n", err)
-		os.Exit(1)
-	}
+// func (p *XMLParser) xmlProcess(params *cli.Parameters) *parser.XMLParser {
+// 	// Parse XML
+// 	xmlParser := &parser.XMLParser{}
+// 	err := xmlParser.Parse(params.FilePath)
+// 	if err != nil {
+// 		fmt.Fprintf(os.Stderr, "Error parsing XML file: %v\n", err)
+// 		os.Exit(1)
+// 	}
 
-	// Get List of Hosts from history
-	listOfHosts := xmlParser.ListOfHosts()
+// 	// Get List of Hosts from history
+// 	listOfHosts := xmlParser.ListOfHosts()
 
-	selectedHosts := cli.Checkboxes("Choose hosts os your interest:", listOfHosts)
+//
 
-	// Filter history to get only req/res for selected hosts
-	xmlParser.FilterByHost(selectedHosts)
+// 	// Filter history to get only req/res for selected hosts
+// 	xmlParser.FilterByHost(selectedHosts)
 
-	return xmlParser
-}
+// 	return xmlParser
+// }
