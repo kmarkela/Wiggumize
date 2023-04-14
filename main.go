@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"Wiggumize/cli"
-	"Wiggumize/internal/parser"
-	"Wiggumize/internal/passive"
+	scan "Wiggumize/internal/scanner"
+	parser "Wiggumize/internal/trafficParser"
 	"Wiggumize/utils"
 )
 
@@ -19,9 +19,9 @@ func main() {
 	// Print Greatings
 	cli.Greet()
 
-	// ##########
-	// Parse Data
-	// ##########
+	// ############################
+	// Prepare History to work with
+	// ############################
 	var browseHistory *parser.BrowseHistory
 	browseHistory = &parser.BrowseHistory{
 		RequestsList: []parser.HistoryItem{},
@@ -46,52 +46,41 @@ func main() {
 		panic("Can't parse CLI parameters")
 	}
 
-	selectedHosts := cli.Checkboxes("Choose hosts os your interest:", browseHistory.ListOfHosts.Keys())
-	browseHistory.FilterByHost(selectedHosts)
+	// ############################
+	// Analyse History
+	// ############################
 
-	for _, item := range browseHistory.RequestsList {
+	// filter scope
+	scopeHosts := cli.Checkboxes("Choose hosts in Scope:", browseHistory.ListOfHosts.Keys())
+	browseHistory.FilterByHost(scopeHosts)
 
-		// if bool(item.Request.Base64) {
-		// 	// item.Response.Value = parser.B64Decode(item.Response.Value)
-		// 	fmt.Println(parser.B64Decode(item.Response.Value))
-		// }
+	scanner, err := scan.SannerBuilder()
+	if err != nil {
+		fmt.Println("Cannot Start Scanner!", err)
+		return
+	}
 
-		// fmt.Println(item.Response.Value)
-		matched, match := passive.Find(item.Response)
-		//TODO: refactor this
-		if matched {
-			for _, m := range match {
-				fmt.Println("======FOUND SECRET========================")
-				fmt.Printf("Description: %s\n", m.Description)
-				fmt.Print("Value: ")
-				fmt.Println(m.MatchingString)
-				fmt.Printf("URL: %s\n", item.URL)
-				// fmt.Println("WHole Responce:")
-				// fmt.Println(s)
-				fmt.Println("======================================")
-			}
+	scanner.RunAllChecks(browseHistory)
+
+	for key, val := range scanner.ChecksMap {
+		// TODO: move it to CLI
+		fmt.Println("#################################")
+		fmt.Printf("####### %s ################\n", key)
+		fmt.Println("#################################")
+		fmt.Println(val.Description)
+		fmt.Println("--------------------------------")
+		fmt.Printf("Found: %d\n", len(val.Results))
+		fmt.Println("--------------------------------")
+
+		for i, m := range val.Results {
+			fmt.Println("--------------------------------")
+			fmt.Printf("Finding #%s\n", i)
+			fmt.Printf("Description: %s\n", m.Description)
+			fmt.Printf("Evidens: %s\n", m.Evidens)
+			fmt.Printf("Host: %s\n", m.Host)
+			fmt.Printf("Details: %s\n", m.Details)
 		}
 
 	}
 
 }
-
-// func (p *XMLParser) xmlProcess(params *cli.Parameters) *parser.XMLParser {
-// 	// Parse XML
-// 	xmlParser := &parser.XMLParser{}
-// 	err := xmlParser.Parse(params.FilePath)
-// 	if err != nil {
-// 		fmt.Fprintf(os.Stderr, "Error parsing XML file: %v\n", err)
-// 		os.Exit(1)
-// 	}
-
-// 	// Get List of Hosts from history
-// 	listOfHosts := xmlParser.ListOfHosts()
-
-//
-
-// 	// Filter history to get only req/res for selected hosts
-// 	xmlParser.FilterByHost(selectedHosts)
-
-// 	return xmlParser
-// }

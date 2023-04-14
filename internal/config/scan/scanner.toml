@@ -1,0 +1,7 @@
+# Scanner configuration
+
+Title = "Scanner Config"
+
+[[checks]]
+name = "Secrets"
+description = "searches fro secrets in req\res"
