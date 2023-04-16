@@ -74,7 +74,7 @@ func main() {
 
 		for i, m := range val.Results {
 			fmt.Println("--------------------------------")
-			fmt.Printf("Finding #%s\n", i)
+			fmt.Printf("Finding #%d\n", i)
 			fmt.Printf("Description: %s\n", m.Description)
 			fmt.Printf("Evidens: %s\n", m.Evidens)
 			fmt.Printf("Host: %s\n", m.Host)

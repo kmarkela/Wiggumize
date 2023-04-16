@@ -97,7 +97,7 @@ func (p *XMLParser) PopulateHistory(file string, history *BrowseHistory) error {
 
 	// Populate BrowseHistory
 	for _, item := range p.ItemElements {
-		host := item.Protocol + "://" + item.Host.Value + "" + item.Port
+		host := item.Protocol + "://" + item.Host.Value + ":" + item.Port
 		history.RequestsList = append(history.RequestsList, HistoryItem{
 			Time:     item.Time,
 			URL:      item.URL,

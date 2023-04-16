@@ -2,6 +2,7 @@ package scan
 
 import (
 	parser "Wiggumize/internal/trafficParser"
+	"sync"
 )
 
 type Scanner struct {
@@ -43,7 +44,9 @@ func SannerBuilder() (*Scanner, error) {
 
 }
 
-func (s *Scanner) RunACheck(b *parser.BrowseHistory, checkName string) {
+func (s *Scanner) RunACheck(b *parser.BrowseHistory, checkName string, wg *sync.WaitGroup) {
+
+	defer wg.Done() // signal that the worker has finished
 
 	// Greb the check from the Map
 	theCheck := s.ChecksMap[checkName]
@@ -53,16 +56,45 @@ func (s *Scanner) RunACheck(b *parser.BrowseHistory, checkName string) {
 		// ToDo: do via rutine
 		theCheck.Results = append(theCheck.Results, theCheck.Execute(item)...)
 	}
-
 	s.ChecksMap[checkName] = theCheck
 
 }
 
+// func (s *Scanner) RunAllChecks(b *parser.BrowseHistory) {
+
+// 	var wg sync.WaitGroup
+// 	// Run all checks in separate rutine
+// 	for key, _ := range s.ChecksMap {
+// 		wg.Add(1) // add a worker to the waitgroup
+// 		go s.RunACheck(b, key, &wg)
+// 	}
+
+// 	wg.Wait() // wait for all workers to finish
+
+// }
+
+func (s *Scanner) runChecks(r parser.HistoryItem, wg *sync.WaitGroup) {
+
+	defer wg.Done() // signal that the worker has finished
+
+	for key, check := range s.ChecksMap {
+		results := check.Execute(r)
+		check.Results = append(s.ChecksMap[key].Results, results...)
+		s.ChecksMap[key] = check
+
+	}
+}
+
 func (s *Scanner) RunAllChecks(b *parser.BrowseHistory) {
 
-	// Run all checks in separate rutine
-	for key, _ := range s.ChecksMap {
-		go s.RunACheck(b, key)
+	var wg sync.WaitGroup
+
+	for _, item := range b.RequestsList {
+
+		wg.Add(1) // add a worker to the waitgroup
+		go s.runChecks(item, &wg)
+
 	}
+	wg.Wait()
 
 }

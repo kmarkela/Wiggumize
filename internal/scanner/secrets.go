@@ -61,6 +61,7 @@ func checkString(s string) []SecretMatch {
 	// TODO: hendle errors
 	rules, _ = getRules()
 
+	// TODO: change to set
 	var matchList []SecretMatch
 
 	for _, rule := range rules {
