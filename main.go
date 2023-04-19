@@ -62,17 +62,17 @@ func main() {
 
 	scanner.RunAllChecks(browseHistory)
 
-	for key, val := range scanner.ChecksMap {
+	for key, val := range scanner.Results {
 		// TODO: move it to CLI
 		fmt.Println("#################################")
 		fmt.Printf("####### %s ################\n", key)
 		fmt.Println("#################################")
-		fmt.Println(val.Description)
+		fmt.Println(scanner.ChecksMap[key].Description)
 		fmt.Println("--------------------------------")
-		fmt.Printf("Found: %d\n", len(val.Results))
+		fmt.Printf("Found: %d\n", len(val))
 		fmt.Println("--------------------------------")
 
-		for i, m := range val.Results {
+		for i, m := range val {
 			fmt.Println("--------------------------------")
 			fmt.Printf("Finding #%d\n", i)
 			fmt.Printf("Description: %s\n", m.Description)

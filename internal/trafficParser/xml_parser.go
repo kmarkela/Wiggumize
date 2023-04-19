@@ -77,6 +77,7 @@ func (p *XMLParser) Parse(filename string) error {
 		return err
 	}
 
+	// TODO: takes a few seconds! needs to be looked at
 	// Use the xml.Unmarshal() function to parse the XML data.
 	err = xml.Unmarshal(data, &p)
 	if err != nil {
@@ -112,5 +113,6 @@ func (p *XMLParser) PopulateHistory(file string, history *BrowseHistory) error {
 		history.ListOfHosts.Add(host)
 
 	}
+
 	return nil
 }
