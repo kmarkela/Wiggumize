@@ -48,7 +48,7 @@ func SannerBuilder() (*Scanner, error) {
 
 	scanner := &Scanner{
 		ChecksMap: checksMap,
-		channel:   make(chan channalMessage, 10240000),
+		channel:   make(chan channalMessage, 128),
 		Results:   make(map[string][]Finding),
 	}
 
