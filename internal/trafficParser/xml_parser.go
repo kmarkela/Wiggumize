@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"io/ioutil"
+	"strings"
 )
 
 // XMLParser is a struct that represents the XML parser.
@@ -25,7 +26,7 @@ type Item struct {
 	Method         string   `xml:"method"`
 	Path           string   `xml:"path"`
 	Extension      string   `xml:"extension"`
-	Request        Request  `xml: "request"`
+	Request        Request  `xml:"request"`
 	Status         string   `xml:"status"`
 	ResponseLength string   `xml:"responselength"`
 	MimeType       string   `xml:"mimetype"`
@@ -87,6 +88,28 @@ func (p *XMLParser) Parse(filename string) error {
 	return nil
 }
 
+func getParams(i Item) string {
+	// divide request for headers and params
+
+	var parts []string
+
+	switch i.Method {
+	case "POST":
+		parts = strings.Split(i.Request.decodeBase64(), "\r\n\r\n")
+	case "GET":
+		parts = strings.Split(i.Path, "?")
+	default:
+		return ""
+	}
+
+	if len(parts) < 2 {
+		return ""
+	}
+	// fmt.Println(parts[1])
+	return parts[1]
+
+}
+
 func (p *XMLParser) PopulateHistory(file string, history *BrowseHistory) error {
 	// Parsing XML history and populating BrowseHistory struct
 
@@ -109,6 +132,7 @@ func (p *XMLParser) PopulateHistory(file string, history *BrowseHistory) error {
 			Status:   item.Status,
 			MimeType: item.MimeType,
 			Response: item.Response.decodeBase64(),
+			Params:   getParams(item),
 		})
 		history.ListOfHosts.Add(host)
 

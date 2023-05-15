@@ -1,0 +1,88 @@
+        ".php", // Server-side web programming files
+        ".html", // Hypertext Markup Language file
+        ".htm", // Hypertext Markup Language file
+        ".asp", // Active Server Pages file
+        ".aspx", // Active Server Pages file (version 2.0 and later)
+        ".jsp", // JavaServer Pages file
+        ".jspx", // JavaServer Pages XML file
+        ".xml", // Extensible Markup Language file
+        ".ini", // Initialization file
+        ".inc", // Include file
+        ".conf", // Configuration file
+        ".cfg", // Configuration file
+        ".cnf", // Configuration file
+        ".txt", // Plain text file
+        ".log", // Log file
+        ".csv", // Comma-separated values file
+        ".json", // JavaScript Object Notation file
+        ".yaml", // YAML Ain't Markup Language file
+        ".yml", // YAML Ain't Markup Language file
+        ".pdf", // Portable Document Format file
+        ".doc", // Microsoft Word document
+        ".docx", // Microsoft Word document (version 2007 and later)
+        ".xls", // Microsoft Excel spreadsheet
+        ".xlsx", // Microsoft Excel spreadsheet (version 2007 and later)
+        ".ppt", // Microsoft PowerPoint presentation
+        ".pptx", // Microsoft PowerPoint presentation (version 2007 and later)
+        ".rtf", // Rich Text Format file
+        ".odt", // OpenDocument Text document
+        ".ods", // OpenDocument Spreadsheet document
+        ".odp", // OpenDocument Presentation document
+        ".odg", // OpenDocument Graphics document
+        ".jpg", // JPEG image file
+        ".jpeg", // JPEG image file
+        ".png", // Portable Network Graphics image file
+        ".gif", // Graphics Interchange Format image file
+        ".bmp", // Bitmap image file
+        ".svg", // Scalable Vector Graphics image file
+        ".ico", // Icon image file
+        ".mp3", // MPEG-1 Audio Layer 3 file
+        ".mp4", // MPEG-4 Part 14 multimedia container file
+        ".wav", // Waveform Audio file
+        ".avi", // Audio Video Interleave multimedia container file
+        ".mov", // QuickTime multimedia file
+        ".wmv", // Windows Media Video multimedia file
+        ".zip", // Archive file
+        ".tar", // Tape Archive file
+        ".gz", // Gzip Compressed file
+        ".rar", // RAR Archive file
+        ".7z", // 7-Zip Archive file
+        ".pem", // Privacy Enhanced Mail (PEM) file
+        ".cer", // Certificate file
+        ".crt", // Certificate file
+        ".key", // Private key file
+        ".db", // Database file
+        ".sqlite", // SQLite database file
+        ".accdb", // Microsoft Access database file (version 2007 and later)
+        ".sql", // SQL script file
+        ".xml", // XML data file
+        ".csv", // CSV data file
+        ".json", // JSON data file
+        ".pgp", // PGP encryption key file
+    ".asc", // ASCII armored PGP encryption key file
+    ".ssh", // SSH private key file
+    ".pub", // SSH public key file
+    ".jar", // Java Archive file
+    ".war", // Java Web Archive file
+    ".ear", // Enterprise Archive file
+    ".class", // Java class file
+    ".exe", // Executable file
+    ".dll", // Dynamic Link Library file
+    ".sys", // System file
+    ".docm", // Microsoft Word macro-enabled document
+    ".dotm", // Microsoft Word macro-enabled template
+    ".xlsm", // Microsoft Excel macro-enabled spreadsheet
+    ".xltm", // Microsoft Excel macro-enabled template
+    ".xlam", // Microsoft Excel add-in
+    ".pptm", // Microsoft PowerPoint macro-enabled presentation
+    ".potm", // Microsoft PowerPoint macro-enabled template
+    ".ppam", // Microsoft PowerPoint add-in
+    ".thmx", // Microsoft Office theme file
+    ".accde", // Microsoft Access database (compiled)
+    ".accdr", // Microsoft Access runtime
+    ".one", // Microsoft OneNote file
+    ".onetoc2", // Microsoft OneNote file
+    ".ics", // iCalendar file
+    ".eml", // E-mail message file
+    ".msg", // Microsoft Outlook e-mail message file
+    ".pst", // Microsoft Outlook personal storage table file

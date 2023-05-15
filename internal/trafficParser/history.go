@@ -1,6 +1,8 @@
 package parser
 
-import "Wiggumize/utils"
+import (
+	"Wiggumize/utils"
+)
 
 type BrowseHistory struct {
 	RequestsList []HistoryItem
@@ -17,6 +19,7 @@ type HistoryItem struct {
 	Status   string
 	MimeType string
 	Response string
+	Params   string
 }
 
 func (b *BrowseHistory) FilterByHost(hosts utils.Set) {
