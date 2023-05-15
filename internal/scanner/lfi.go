@@ -1,131 +1,111 @@
 package scan
 
-// import (
-// 	parser "Wiggumize/internal/trafficParser"
-// 	"fmt"
-// 	"os"
+import (
+	parser "Wiggumize/internal/trafficParser"
+	"fmt"
+	"os"
+	"regexp"
 
-// 	"regexp"
+	"github.com/pelletier/go-toml"
+)
 
-// 	"github.com/pelletier/go-toml"
-// )
+type Extension struct {
+	Description string
+	Ext         string
+}
 
-// var lfi = Check{
-// 	Description: "This is looking for filename in Req. (possible lead to LFI)",
-// 	Execute:     searchForLFI,
-// 	CheckReq:    true,
-// 	CheckRes:    false,
-// }
+type ExtsConfig struct {
+	Title      string
+	Extensions []Extension
+}
 
-// var commonFileExt = [31]string{
-// 	"php",
-// 	"txt",
-// 	"dat",
-// 	"log",
-// 	"html",
-// 	"htm",
-// 	"asp",
-// 	"aspx",
-// 	"jsp",
-// 	"jspx",
-// 	"cfm",
-// 	"do",
-// 	"action",
-// 	"jspx",
-// 	"xml",
-// 	"ini",
-// 	"inc",
-// 	"conf",
-// 	"cfg",
-// 	"cnf",
-// 	"bak",
-// 	"old",
-// 	"tar",
-// 	"gz",
-// 	"zip",
-// 	"rar",
-// 	"7z",
-// 	"pem",
-// 	"cer",
-// 	"crt",
-// 	"key",
-// }
+func getExt() (ExtsConfig, error) {
+	// Open the TOML file
+	// TODO: use const from config/consts.go
+	// TODO: Refactor. Code repetition on each TOML read
+	file, err := os.Open("internal/config/scan/lfi.toml")
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return ExtsConfig{}, err
+	}
+	defer file.Close()
 
-// func getRules1() ([]rule, error) {
-// 	// Open the TOML file
-// 	// TODO: use const from config/consts.go
-// 	// TODO: Refactor. Code repetition on each TOML read
-// 	file, err := os.Open("internal/config/scan/secrets.toml")
-// 	if err != nil {
-// 		fmt.Println("Error opening file:", err)
-// 		return nil, err
-// 	}
-// 	defer file.Close()
+	var ec ExtsConfig
+	err = toml.NewDecoder(file).Decode(&ec)
+	if err != nil {
+		fmt.Println("Error decoding TOML file:", err)
+		return ExtsConfig{}, err
+	}
+	return ec, nil
 
-// 	var config config
-// 	err = toml.NewDecoder(file).Decode(&config)
-// 	if err != nil {
-// 		fmt.Println("Error decoding TOML file:", err)
-// 		return nil, err
-// 	}
+}
 
-// 	return config.Rules, nil
+func buidLfiCheck() Check {
+	ec, err := getExt()
+	if err != nil {
+		fmt.Println("Cennot get rules for LFI")
+	}
 
-// }
+	return Check{
+		Description: "This module is searching for filenames in request parameters",
+		Execute:     searchForFiles,
+		Config:      ec,
+	}
+}
 
-// func checkString1(s string) []SecretMatch {
+func buidFindingsFromFile(ml []SecretMatch, direction string, host string) []Finding {
 
-// 	var rules []rule
-// 	// TODO: hendle errors
-// 	rules, _ = getRules()
+	findings := []Finding{}
+	for _, item := range ml {
+		finding := Finding{
+			Host:        host,
+			Description: item.Description,
+			Evidens:     item.MatchingString,
+			Details:     direction,
+		}
+		findings = append(findings, finding)
+	}
 
-// 	// TODO: change to set
-// 	var matchList []SecretMatch
+	return findings
+}
 
-// 	for _, rule := range rules {
+func searchForFiles(p parser.HistoryItem, c *Check) []Finding {
 
-// 		regex, err := regexp.Compile(rule.Regex)
-// 		if err != nil {
-// 			fmt.Printf("Error compiling regex pattern: %s\n", err)
-// 			continue
-// 		}
+	rePatern := ".*\\.("
 
-// 		match := regex.FindString(s)
+	// Build a pattern for filename
+	for i, ext := range c.Config.(ExtsConfig).Extensions {
+		//`.*\.(txt|php|exe)$`
+		rePatern = rePatern + ext.Ext[1:] // add exts w\o leading dot
+		if i == len(c.Config.(ExtsConfig).Extensions)-1 {
+			rePatern = rePatern + ").*"
+			break
+		}
+		rePatern = rePatern + "|"
 
-// 		if match != "" {
-// 			matchList = append(matchList, SecretMatch{MatchingString: match, Description: rule.Description})
-// 			// fmt.Println(match)
-// 		}
+	}
+	// fmt.Println(rePatern)
 
-// 	}
+	// check req/res
 
-// 	return matchList
-// }
+	regex, err := regexp.Compile(rePatern)
+	if err != nil {
+		fmt.Printf("Error compiling regex pattern: %s\n", err)
+	}
 
-// func buidFindings1(ml []SecretMatch, direction string, host string) []Finding {
+	match := regex.FindString(p.Params)
 
-// 	findings := []Finding{}
-// 	for _, item := range ml {
-// 		finding := Finding{
-// 			Host:        host,
-// 			Description: item.Description,
-// 			Evidens:     item.MatchingString,
-// 			Details:     direction,
-// 		}
-// 		findings = append(findings, finding)
-// 	}
+	if match == "" {
+		return nil
+	}
 
-// 	return findings
-// }
+	var findings []Finding
 
-// func searchForLFI(p parser.HistoryItem) []Finding {
-
-// 	// check req/res
-// 	listOfMatches := checkString(p.Request)
-// 	findings := buidFindings1(listOfMatches, "Req", p.Host)
-
-// 	listOfMatches = checkString(p.Response)
-// 	findings = append(findings, buidFindings1(listOfMatches, "Res", p.Host)...)
-
-// 	return findings
-// }
+	finding := Finding{Host: p.Host,
+		Description: "filename in a parameter",
+		Evidens:     p.Params,
+		Details:     "",
+	}
+	findings = append(findings, finding)
+	return findings
+}

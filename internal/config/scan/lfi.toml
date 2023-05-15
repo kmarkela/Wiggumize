@@ -1,0 +1,263 @@
+# List of file extentions
+
+Title = "lfi Config"
+
+[[extensions]]
+ext = ".php"
+description = "Server-side web programming files"
+
+[[extensions]]
+ext = ".html"
+description = "Hypertext Markup Language file"
+
+[[extensions]]
+ext = ".htm"
+description = "Hypertext Markup Language file"
+
+[[extensions]]
+ext = ".asp"
+description = "Active Server Pages file"
+
+[[extensions]]
+ext = ".aspx"
+description = "Active Server Pages file (version 2.0 and later)"
+
+[[extensions]]
+ext = ".jsp"
+description = "JavaServer Pages file"
+
+[[extensions]]
+ext = ".jspx"
+description = "JavaServer Pages XML file"
+
+[[extensions]]
+ext = ".xml"
+description = "Extensible Markup Language file"
+
+[[extensions]]
+ext = ".ini"
+description = "Initialization file"
+
+[[extensions]]
+ext = ".inc"
+description = "Include file"
+
+[[extensions]]
+ext = ".msg"
+description = "Microsoft Outlook email message file"
+
+[[extensions]]
+ext = ".eml"
+description = "Email message file"
+
+[[extensions]]
+ext = ".pst"
+description = "Microsoft Outlook personal storage file"
+
+[[extensions]]
+ext = ".db"
+description = "Database file"
+
+[[extensions]]
+ext = ".sqlite"
+description = "SQLite database file"
+
+[[extensions]]
+ext = ".m4v"
+description = "MPEG-4 Video file"
+
+[[extensions]]
+ext = ".avi"
+description = "Audio Video Interleave multimedia file"
+
+[[extensions]]
+ext = ".flv"
+description = "Flash Video file"
+
+[[extensions]]
+ext = ".mov"
+description = "QuickTime video file"
+
+[[extensions]]
+ext = ".wmv"
+description = "Windows Media Video file"
+
+[[extensions]]
+ext = ".mp3"
+description = "MPEG-1 Audio Layer 3 file"
+
+[[extensions]]
+ext = ".wav"
+description = "Waveform Audio file"
+
+[[extensions]]
+ext = ".aac"
+description = "Advanced Audio Coding file"
+
+[[extensions]]
+ext = ".ogg"
+description = "Ogg Vorbis Audio file"
+
+[[extensions]]
+ext = ".pdf"
+description = "Portable Document Format file"
+
+[[extensions]]
+ext = ".doc"
+description = "Microsoft Word document file"
+
+[[extensions]]
+ext = ".ppt"
+description = "Microsoft PowerPoint presentation file"
+
+[[extensions]]
+ext = ".xls"
+description = "Microsoft Excel spreadsheet file"
+
+[[extensions]]
+ext = ".csv"
+description = "Comma-separated values file"
+
+[[extensions]]
+ext = ".zip"
+description = "ZIP archive file"
+
+[[extensions]]
+ext = ".rar"
+description = "RAR archive file"
+
+[[extensions]]
+ext = ".7z"
+description = "7-Zip archive file"
+
+[[extensions]]
+ext = ".tar"
+description = "Tape Archive file"
+
+[[extensions]]
+ext = ".gz"
+description = "Gzip compressed file"
+
+[[extensions]]
+ext = ".mp4"
+description = "MPEG-4 Part 14 multimedia file"
+
+[[extensions]]
+ext = ".mkv"
+description = "Matroska multimedia container file"
+
+[[extensions]]
+ext = ".iso"
+description = "Disc image file"
+
+[[extensions]]
+ext = ".jar"
+description = "Java Archive file"
+
+[[extensions]]
+ext = ".war"
+description = "Java Web Archive file"
+
+[[extensions]]
+ext = ".ear"
+description = "Enterprise Archive file"
+
+[[extensions]]
+ext = ".apk"
+description = "Android Package file"
+
+[[extensions]]
+ext = ".exe"
+description = "Executable file"
+
+[[extensions]]
+ext = ".dll"
+description = "Dynamic Link Library file"
+
+[[extensions]]
+ext = ".sys"
+description = "System file"
+
+[[extensions]]
+ext = ".bin"
+description = "Binary file"
+
+[[extensions]]
+ext = ".dat"
+description = "Data file"
+
+[[extensions]]
+ext = ".log"
+description = "Log file"
+
+[[extensions]]
+ext = ".conf"
+description = "Configuration file"
+
+[[extensions]]
+ext = ".cfg"
+description = "Configuration file"
+
+[[extensions]]
+ext = ".ini"
+description = "Initialization file"
+
+[[extensions]]
+ext = ".bak"
+description = "Backup file"
+
+[[extensions]]
+ext = ".old"
+description = "Old file version"
+
+[[extensions]]
+ext = ".mdb"
+description = "Microsoft Access database file"
+
+[[extensions]]
+ext = ".accdb"
+description = "Microsoft Access database file (version 2007 and later)"
+
+[[extensions]]
+ext = ".sql"
+description = "SQL script file"
+
+[[extensions]]
+ext = ".xml"
+description = "XML data file"
+
+[[extensions]]
+ext = ".json"
+description = "JSON data file"
+
+[[extensions]]
+ext = ".csv"
+description = "CSV data file"
+
+[[extensions]]
+ext = ".tsv"
+description = "Tab-separated values data file"
+
+[[extensions]]
+ext = ".tab"
+description = "Tab-separated values data file"
+
+[[extensions]]
+ext = ".jpg"
+description = "JPEG image file"
+
+[[extensions]]
+ext = ".jpeg"
+description = "JPEG image file"
+
+[[extensions]]
+ext = ".png"
+description = "Portable Network Graphics image file"
+
+[[extensions]]
+ext = ".gif"
+description = "Graphics Interchange Format image file"
+
+[[extensions]]
+ext = ".bmp"
+description = "Bitmap image file"

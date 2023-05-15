@@ -4,4 +4,8 @@ Title = "Scanner Config"
 
 [[checks]]
 name = "Secrets"
-description = "searches fro secrets in req\res"
+description = "searches for secrets in req\res"
+
+[[checks]]
+name = "Lfi"
+description = "searches for filename in req"
