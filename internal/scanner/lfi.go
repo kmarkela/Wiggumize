@@ -53,22 +53,6 @@ func buidLfiCheck() Check {
 	}
 }
 
-func buidFindingsFromFile(ml []SecretMatch, direction string, host string) []Finding {
-
-	findings := []Finding{}
-	for _, item := range ml {
-		finding := Finding{
-			Host:        host,
-			Description: item.Description,
-			Evidens:     item.MatchingString,
-			Details:     direction,
-		}
-		findings = append(findings, finding)
-	}
-
-	return findings
-}
-
 func searchForFiles(p parser.HistoryItem, c *Check) []Finding {
 
 	rePatern := ".*\\.("
@@ -104,7 +88,7 @@ func searchForFiles(p parser.HistoryItem, c *Check) []Finding {
 	finding := Finding{Host: p.Host,
 		Description: "filename in a parameter",
 		Evidens:     p.Params,
-		Details:     "",
+		Details:     "URL: " + p.URL,
 	}
 	findings = append(findings, finding)
 	return findings
