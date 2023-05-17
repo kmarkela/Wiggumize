@@ -3,7 +3,9 @@ package parser
 import (
 	"encoding/base64"
 	"encoding/xml"
+	"fmt"
 	"io/ioutil"
+	"net/url"
 	"strings"
 )
 
@@ -106,7 +108,14 @@ func getParams(i Item) string {
 		return ""
 	}
 	// fmt.Println(parts[1])
-	return parts[1]
+
+	decodedString, err := url.QueryUnescape(parts[1])
+	if err != nil {
+		fmt.Println("Error decoding URL:", err)
+		return ""
+	}
+
+	return decodedString
 
 }
 
