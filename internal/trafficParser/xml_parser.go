@@ -109,7 +109,13 @@ func getParams(i Item) string {
 	}
 	// fmt.Println(parts[1])
 
-	decodedString, err := url.QueryUnescape(parts[1])
+	// Get elements from index 1 till the end of the list. (remove headers)
+	elements := parts[1:]
+
+	// Create a string by joining the elements with a separator
+	result := strings.Join(elements, " ")
+
+	decodedString, err := url.QueryUnescape(result)
 	if err != nil {
 		fmt.Println("Error decoding URL:", err)
 		return ""
