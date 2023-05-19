@@ -6,17 +6,22 @@ import (
 	"regexp"
 )
 
-func buidSSRFCheck() Check {
+func buidXMLCheck() Check {
+
 	return Check{
 		Description: "This module is searching for filenames in request parameters",
-		Execute:     searchForURLs,
+		Execute:     searchForXML,
 		Config:      nil,
 	}
 }
 
-func searchForURLs(p parser.HistoryItem, c *Check) []Finding {
+func searchForXML(p parser.HistoryItem, c *Check) []Finding {
 
-	rePatern := `(https?):\/\/[^\s\/$.?#].[^\s\/]*\/?`
+	// if p.Method == "POST" {
+	// 	fmt.Println(p.Params)
+	// }
+
+	rePatern := `\<.*\>`
 
 	regex, err := regexp.Compile(rePatern)
 	if err != nil {
@@ -32,7 +37,7 @@ func searchForURLs(p parser.HistoryItem, c *Check) []Finding {
 	var findings []Finding
 
 	finding := Finding{Host: p.Host,
-		Description: "URL in a parameter",
+		Description: "possible XML in a parameter",
 		Evidens:     p.Params,
 		Details:     "URL:" + p.URL,
 	}
