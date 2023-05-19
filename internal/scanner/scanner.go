@@ -45,7 +45,8 @@ func SannerBuilder() (*Scanner, error) {
 	var checksMap = map[string]Check{
 		"Secrets": buidSecretCheck(),
 		"lfi":     buidLfiCheck(),
-		"ssrf":    buidSSRFCheck(),
+		// "ssrf":     buidSSRFCheck(),
+		"notFound": buidNotFoundCheck(),
 	}
 
 	scanner := &Scanner{

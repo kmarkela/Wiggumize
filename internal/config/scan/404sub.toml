@@ -1,0 +1,55 @@
+# List of hosting services's 404 error 
+
+Title = "404 Sub domain"
+
+[[services]]
+name = "AWS"
+notFoundMessage = "The specified bucket does not exist"
+
+[[services]]
+name = "GitHub"
+notFoundMessage = "There isn't a GitHub Pages site here"
+
+[[services]]
+name = "Azure"
+notFoundMessage = "The resource you are looking for has been removed, had its name changed, or is temporarily unavailable"
+
+[[services]]
+name = "Heroku"
+notFoundMessage = "No such app"
+
+[[services]]
+name = "Heroku"
+notFoundMessage = "There's nothing here, yet"
+
+[[services]]
+name = "Fastly"
+notFoundMessage = "Fastly error: unknown domain"
+
+[[services]]
+name = "WordPress"
+notFoundMessage = "Do you want to register domain.wordpress.com"
+
+[[services]]
+name = "Tumblr"
+notFoundMessage = "There's nothing here"
+
+[[services]]
+name = "Shopify"
+notFoundMessage = "Sorry, this shop is currently unavailable"
+
+[[services]]
+name = "Bitbucket"
+notFoundMessage = "Repository not found"
+
+[[services]]
+name = "Cloudfront"
+notFoundMessage = "ERROR: The request could not be satisfied"
+
+[[services]]
+name = "Ghost"
+notFoundMessage = "The thing you were looking for is no longer here, or never was"
+
+[[services]]
+name = "Read the Docs"
+notFoundMessage = "The requested project does not exist"
