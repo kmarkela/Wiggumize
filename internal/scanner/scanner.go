@@ -43,11 +43,12 @@ func SannerBuilder() (*Scanner, error) {
 
 	// Cehck defined in the cehck's file
 	var checksMap = map[string]Check{
-		"Secrets":  buidSecretCheck(),
-		"LFI":      buidLfiCheck(),
-		"SSRF":     buidSSRFCheck(),
-		"notFound": buidNotFoundCheck(),
-		"XML":      buidXMLCheck(),
+		"Secrets":   buidSecretCheck(),
+		"LFI":       buidLfiCheck(),
+		"SSRF":      buidSSRFCheck(),
+		"notFound":  buidNotFoundCheck(),
+		"XML":       buidXMLCheck(),
+		"Redirects": buidRedirectCheck(),
 	}
 
 	scanner := &Scanner{
