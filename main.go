@@ -62,25 +62,12 @@ func main() {
 
 	scanner.RunAllChecks(browseHistory)
 
-	for key, val := range scanner.Results {
-		// TODO: move it to CLI
-		fmt.Println("#################################")
-		fmt.Printf("####### %s ################\n", key)
-		fmt.Println("#################################")
-		fmt.Println(scanner.ChecksMap[key].Description)
-		fmt.Println("--------------------------------")
-		fmt.Printf("Found: %d\n", len(val))
-		fmt.Println("--------------------------------")
-
-		for i, m := range val {
-			fmt.Println("--------------------------------")
-			fmt.Printf("Finding #%d\n", i)
-			fmt.Printf("Description: %s\n", m.Description)
-			fmt.Printf("Evidens: %s\n", m.Evidens)
-			fmt.Printf("Host: %s\n", m.Host)
-			fmt.Printf("Details: %s\n", m.Details)
-		}
-
+	err = cli.OutputToMD(scanner, scopeHosts.Keys(), params.Output)
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
+
+	fmt.Printf("Result saved to: %s\n", params.Output)
 
 }

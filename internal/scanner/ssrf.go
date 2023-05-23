@@ -8,7 +8,7 @@ import (
 
 func buidSSRFCheck() Check {
 	return Check{
-		Description: "This module is searching for filenames in request parameters",
+		Description: "This module is searching for URL in request parameters.",
 		Execute:     searchForURLs,
 		Config:      nil,
 	}

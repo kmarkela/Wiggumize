@@ -26,7 +26,7 @@ func buidNotFoundCheck() Check {
 	}
 
 	return Check{
-		Description: "This module is searching for secrets (eg. API keys) in Req\\Res",
+		Description: "This module is searching for 404 messages form hostings.",
 		Execute:     searchForNotFound,
 		Config:      nc,
 	}

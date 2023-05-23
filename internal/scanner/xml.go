@@ -9,7 +9,7 @@ import (
 func buidXMLCheck() Check {
 
 	return Check{
-		Description: "This module is searching for filenames in request parameters",
+		Description: "This module is searching for XML in request parameters",
 		Execute:     searchForXML,
 		Config:      nil,
 	}

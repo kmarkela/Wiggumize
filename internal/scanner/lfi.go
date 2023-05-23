@@ -47,7 +47,7 @@ func buidLfiCheck() Check {
 	}
 
 	return Check{
-		Description: "This module is searching for filenames in request parameters",
+		Description: "This module is searching for filenames in request parameters. Could be an indication of possible LFI",
 		Execute:     searchForFiles,
 		Config:      ec,
 	}
