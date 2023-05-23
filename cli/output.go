@@ -14,7 +14,7 @@ func buildACheckMD(key string, val []scan.Finding) string {
 	for i, f := range val {
 		content += "### Finding " + strconv.Itoa(i) + ". - " + f.Description + "\n"
 		content += "__Host: " + f.Host + "__ \n\n"
-		content += "_Evidens:_\n\n```\n " + f.Evidens + "\n```\n"
+		content += "_Evidens:_\n\n```\n" + f.Evidens + "\n```\n"
 		if f.Details != "" {
 			content += "_More Details:_\n\n```\n" + f.Details + "\n```\n"
 		}
