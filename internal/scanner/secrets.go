@@ -44,7 +44,7 @@ func buidSecretCheck() Check {
 	}
 
 	return Check{
-		Description: "This module is searching for secrets (eg. API keys) in Req\\Res",
+		Description: "This module is searching for secrets (eg. API keys)",
 		Execute:     searchForSecrets,
 		Config:      sc,
 	}
