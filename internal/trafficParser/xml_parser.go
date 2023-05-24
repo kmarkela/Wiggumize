@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/url"
+	"regexp"
 	"strings"
 )
 
@@ -90,6 +91,8 @@ func (p *XMLParser) Parse(filename string) error {
 	return nil
 }
 
+// TODO: move to utils
+
 func getParams(i Item) string {
 	// divide request for headers and params
 
@@ -125,6 +128,21 @@ func getParams(i Item) string {
 
 }
 
+// TODO: move to utils
+func getContentType(headerString string) string {
+	lines := strings.Split(headerString, "\n")
+	contentTypeRegex := regexp.MustCompile(`Content-Type:\s*(.*)`)
+
+	for _, line := range lines {
+		match := contentTypeRegex.FindStringSubmatch(line)
+		if len(match) > 1 {
+			return strings.TrimSpace(match[1])
+		}
+	}
+
+	return ""
+}
+
 func (p *XMLParser) PopulateHistory(file string, history *BrowseHistory) error {
 	// Parsing XML history and populating BrowseHistory struct
 
@@ -137,17 +155,24 @@ func (p *XMLParser) PopulateHistory(file string, history *BrowseHistory) error {
 	// Populate BrowseHistory
 	for _, item := range p.ItemElements {
 		host := item.Protocol + "://" + item.Host.Value + ":" + item.Port
+
+		ReqContentType := ""
+		if item.Method == "POST" {
+			ReqContentType = getContentType(item.Request.decodeBase64())
+		}
+
 		history.RequestsList = append(history.RequestsList, HistoryItem{
-			Time:     item.Time,
-			URL:      item.URL,
-			Host:     host,
-			Path:     item.Path,
-			Method:   item.Method,
-			Request:  item.Request.decodeBase64(),
-			Status:   item.Status,
-			MimeType: item.MimeType,
-			Response: item.Response.decodeBase64(),
-			Params:   getParams(item),
+			Time:           item.Time,
+			URL:            item.URL,
+			Host:           host,
+			Path:           item.Path,
+			Method:         item.Method,
+			Request:        item.Request.decodeBase64(),
+			Status:         item.Status,
+			ReqContentType: ReqContentType,
+			ResContentType: getContentType(item.Response.decodeBase64()),
+			Response:       item.Response.decodeBase64(),
+			Params:         getParams(item),
 		})
 		history.ListOfHosts.Add(host)
 

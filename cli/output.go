@@ -24,6 +24,27 @@ func buildACheckMD(key string, val []scan.Finding) string {
 
 }
 
+func buildParams(scanner *scan.Scanner) string {
+
+	content := "## Parameters: \n"
+
+	for host, endpoints := range scanner.Params.Hosts {
+		content += "__Host: " + host + "__\n"
+
+		for endpoint, params := range endpoints.Endpoints {
+			content += "_Endpoint: " + endpoint + "_ \n"
+
+			for key, val := range params.Params {
+				content += "- _" + key + ":_ " + val + "\n"
+			}
+			content += "\n"
+		}
+		content += "\n\n"
+	}
+
+	return content
+}
+
 func OutputToMD(scanner *scan.Scanner, scope []string, filename string) error {
 
 	content := "# Wiggumize Report\n\n"
@@ -38,6 +59,7 @@ func OutputToMD(scanner *scan.Scanner, scope []string, filename string) error {
 	for key, val := range scanner.ChecksMap {
 		content += "- __" + key + ":__ " + val.Description + "\n"
 	}
+	content += "- __" + scanner.Params.Name + ":__ " + scanner.Params.Description + "\n"
 
 	content += strings.Repeat("-", 20)
 	content += "\n\n"
@@ -54,6 +76,12 @@ func OutputToMD(scanner *scan.Scanner, scope []string, filename string) error {
 		content += buildACheckMD(key, val)
 
 	}
+
+	content += "\n\n"
+	content += strings.Repeat("-", 20)
+	content += "\n\n"
+
+	content += buildParams(scanner)
 
 	file, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
