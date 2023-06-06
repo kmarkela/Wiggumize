@@ -10,16 +10,17 @@ type BrowseHistory struct {
 }
 
 type HistoryItem struct {
-	Time     string
-	URL      string
-	Host     string
-	Path     string
-	Method   string
-	Request  string
-	Status   string
-	MimeType string
-	Response string
-	Params   string
+	Time           string
+	URL            string
+	Host           string
+	Path           string
+	Method         string
+	Request        string
+	Status         string
+	ReqContentType string
+	Response       string
+	ResContentType string
+	Params         string
 }
 
 func (b *BrowseHistory) FilterByHost(hosts utils.Set) {
