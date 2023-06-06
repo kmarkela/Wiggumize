@@ -118,6 +118,10 @@ func getParams(i Item) string {
 	// Create a string by joining the elements with a separator
 	result := strings.Join(elements, " ")
 
+	if i.Method == "POST" {
+		return result
+	}
+
 	decodedString, err := url.QueryUnescape(result)
 	if err != nil {
 		fmt.Println("Error decoding URL:", err)
@@ -174,6 +178,7 @@ func (p *XMLParser) PopulateHistory(file string, history *BrowseHistory) error {
 			Response:       item.Response.decodeBase64(),
 			Params:         getParams(item),
 		})
+
 		history.ListOfHosts.Add(host)
 
 	}

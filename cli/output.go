@@ -33,11 +33,13 @@ func buildParams(scanner *scan.Scanner) string {
 
 		for endpoint, params := range endpoints.Endpoints {
 			content += "_Endpoint: " + endpoint + "_ \n"
+			content += "Method: " + params.Method + "\n"
+			content += "```\n"
 
 			for key, val := range params.Params {
-				content += "- _" + key + ":_ " + val + "\n"
+				content += "- " + key + ": " + val + "\n"
 			}
-			content += "\n"
+			content += "```\n"
 		}
 		content += "\n\n"
 	}
