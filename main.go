@@ -9,6 +9,29 @@ import (
 	"Wiggumize/utils"
 )
 
+func doScan(browseHistory *parser.BrowseHistory, hosts []string, output string) {
+
+	scanner, err := scan.SannerBuilder()
+	if err != nil {
+		fmt.Println("Cannot Start Scanner!", err)
+		return
+	}
+
+	scanner.RunAllChecks(browseHistory)
+
+	err = cli.OutputToMD(scanner, hosts, output)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// fmt.Printf("Result saved to: %s\n", output)
+}
+
+func doSeaerch() {
+	panic("unimplemented")
+}
+
 func main() {
 
 	// Get Cli Parameters
@@ -54,20 +77,12 @@ func main() {
 	scopeHosts := cli.Checkboxes("Choose hosts in Scope:", browseHistory.ListOfHosts.Keys())
 	browseHistory.FilterByHost(scopeHosts)
 
-	scanner, err := scan.SannerBuilder()
-	if err != nil {
-		fmt.Println("Cannot Start Scanner!", err)
-		return
+	switch params.Action {
+	case "scan":
+		doScan(browseHistory, scopeHosts.Keys(), params.Output)
+	case "search":
+		doSeaerch()
+
 	}
-
-	scanner.RunAllChecks(browseHistory)
-
-	err = cli.OutputToMD(scanner, scopeHosts.Keys(), params.Output)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	fmt.Printf("Result saved to: %s\n", params.Output)
 
 }
