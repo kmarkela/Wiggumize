@@ -27,42 +27,21 @@ const (
 	notContain matchType = "notContain"
 )
 
-type SearchConfig struct {
-	Output outputType
-}
-
-type outputType int
-
-const (
-	endpoint outputType = iota
-	headers
-	reqOnly
-	full
-)
-
 type Search struct {
 	Config SearchConfig
 	Regexp SearchParams
 	// HelpMessage string
 }
 
-func hello() {
-	msg := "Regexp Search. Type \"menu\" to get Search menu or \"exit\" to exit \n"
-	// msg += "Type search quarry: "
-
-	fmt.Print(msg)
-
-}
-
 func (s *Search) InputHandler() {
 
-	hello()
+	fmt.Print("Regexp Search. Type \"menu\" to get Search menu or \"exit\" to exit \n")
 
 	input := cli.GetString("Type search quarry: ")
 
 	switch input {
 	case "menu", "Menu", "MENU":
-		handleMenu()
+		handleMenu(s)
 	case "exit", "Exit", "EXIT":
 		return
 	default:

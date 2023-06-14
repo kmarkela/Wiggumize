@@ -2,10 +2,9 @@ package search
 
 import (
 	"Wiggumize/cli"
-	"fmt"
 )
 
-func handleMenu() {
+func handleMenu(s *Search) {
 
 	input := printMenu()
 
@@ -13,8 +12,7 @@ func handleMenu() {
 	case "Help":
 		printHelpMsg()
 	case "Config":
-		// TODO: Config
-		fmt.Println("doNOtImplemented")
+		s.handleConfig()
 	default:
 		return
 	}
@@ -23,5 +21,5 @@ func handleMenu() {
 func printMenu() string {
 	menuOptions := []string{"Help", "Config", "Back"}
 
-	return cli.GetSelect("Choose an option: ", menuOptions)
+	return cli.GetSelect("Choose an option: ", menuOptions, "Help")
 }

@@ -33,12 +33,13 @@ func GetString(msg string) string {
 	return s
 }
 
-func GetSelect(msg string, opts []string) string {
+func GetSelect(msg string, opts []string, def string) string {
 
 	s := ""
 	prompt := &survey.Select{
 		Message: msg,
 		Options: opts,
+		Default: def,
 	}
 	survey.AskOne(prompt, &s)
 

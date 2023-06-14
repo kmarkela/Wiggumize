@@ -31,6 +31,7 @@ func doScan(browseHistory *parser.BrowseHistory, hosts []string, output string) 
 
 func doSearch() {
 	searcher := search.Search{}
+	searcher.Config.Output = "reqOnly"
 
 	searcher.InputHandler()
 
