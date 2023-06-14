@@ -1,7 +1,7 @@
 package search
 
 import (
-	"Wiggumize/utils"
+	"Wiggumize/cli"
 	"fmt"
 )
 
@@ -41,41 +41,37 @@ const (
 )
 
 type Search struct {
-	Config      SearchConfig
-	Regexp      SearchParams
-	HelpMessage string
+	Config SearchConfig
+	Regexp SearchParams
+	// HelpMessage string
 }
 
-func (s *Search) Help() {
-	fmt.Println(s.HelpMessage)
+func hello() {
+	msg := "Regexp Search. Type \"menu\" to get Search menu or \"exit\" to exit \n"
+	// msg += "Type search quarry: "
+
+	fmt.Print(msg)
+
 }
 
-func returnHelpMsg() string {
-	help := "\n\nRegexp Search: \n\n"
-	help += "Avaliable search fields: \n"
+func (s *Search) InputHandler() {
 
-	searchFields := utils.GetStructFieldNames(SearchParams{})
+	hello()
 
-	for _, name := range searchFields {
-		help += "- " + name + "\n"
+	input := cli.GetString("Type search quarry: ")
+
+	switch input {
+	case "menu", "Menu", "MENU":
+		handleMenu()
+	case "exit", "Exit", "EXIT":
+		return
+	default:
+		doSearch()
 	}
 
-	help += "\nAvaliable search operators: \n"
-
-	help += "- contain\n"
-	help += "- eq\n"
-	help += "- notEq\n"
-	help += "- notContain\n\n"
-
-	help += "Search Example: \n"
-	help += "ReqMethod.eq POST & ReqBody.contain admin & ResContentType.notContain HTML & ResBody.contain success\n"
-
-	return help
+	s.InputHandler()
 }
 
-func BuildSearch() Search {
-
-	return Search{
-		HelpMessage: returnHelpMsg(),
-	}
+func doSearch() {
+	panic("unimplemented")
 }

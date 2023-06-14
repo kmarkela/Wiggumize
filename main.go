@@ -30,8 +30,10 @@ func doScan(browseHistory *parser.BrowseHistory, hosts []string, output string) 
 }
 
 func doSearch() {
-	searcher := search.BuildSearch()
-	searcher.Help()
+	searcher := search.Search{}
+
+	searcher.InputHandler()
+
 }
 
 func main() {
