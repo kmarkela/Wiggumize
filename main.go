@@ -5,6 +5,7 @@ import (
 
 	"Wiggumize/cli"
 	scan "Wiggumize/internal/scanner"
+	search "Wiggumize/internal/search"
 	parser "Wiggumize/internal/trafficParser"
 	"Wiggumize/utils"
 )
@@ -28,8 +29,9 @@ func doScan(browseHistory *parser.BrowseHistory, hosts []string, output string) 
 	// fmt.Printf("Result saved to: %s\n", output)
 }
 
-func doSeaerch() {
-	panic("unimplemented")
+func doSearch() {
+	searcher := search.BuildSearch()
+	searcher.Help()
 }
 
 func main() {
@@ -81,7 +83,7 @@ func main() {
 	case "scan":
 		doScan(browseHistory, scopeHosts.Keys(), params.Output)
 	case "search":
-		doSeaerch()
+		doSearch()
 
 	}
 
