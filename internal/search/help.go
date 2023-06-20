@@ -17,13 +17,11 @@ func printHelpMsg() {
 
 	help += "\nAvaliable search operators: \n"
 
-	help += "- contain\n"
-	help += "- eq\n"
-	help += "- notEq\n"
-	help += "- notContain\n\n"
+	help += "- & - AND\n"
+	help += "- ! - NOT\n\n"
 
 	help += "Search Example: \n"
-	help += "ReqMethod.eq POST & ReqBody.contain admin & ResContentType.notContain HTML & ResBody.contain success\n"
+	help += "ReqMethod POST & ReqBody *admin* & ! ResContentType HTML & ResBody success\n"
 
 	fmt.Println(help)
 }

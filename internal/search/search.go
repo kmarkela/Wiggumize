@@ -18,14 +18,21 @@ type SearchParams struct {
 
 type searchMatch map[matchType]string
 
-type matchType string
+type matchType int
 
 const (
-	contain    matchType = "contain"
-	eq         matchType = "eq"
-	notEq      matchType = "notEq"
-	notContain matchType = "notContain"
+	negagteMatch matchType = iota
+	match
 )
+
+// type matchType string
+
+// const (
+// 	contain    matchType = "contain"
+// 	eq         matchType = "eq"
+// 	notEq      matchType = "notEq"
+// 	notContain matchType = "notContain"
+// )
 
 type Search struct {
 	Config SearchConfig
@@ -45,12 +52,8 @@ func (s *Search) InputHandler() {
 	case "exit", "Exit", "EXIT":
 		return
 	default:
-		doSearch()
+		s.doSearch(input)
 	}
 
 	s.InputHandler()
-}
-
-func doSearch() {
-	panic("unimplemented")
 }
