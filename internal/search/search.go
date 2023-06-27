@@ -2,6 +2,7 @@ package search
 
 import (
 	"Wiggumize/cli"
+	parser "Wiggumize/internal/trafficParser"
 	"fmt"
 )
 
@@ -10,37 +11,33 @@ type SearchParams struct {
 	ReqHeader      []searchMatch
 	ReqContentType []searchMatch
 	ReqBody        []searchMatch
-	ResMethod      []searchMatch
 	ResHeader      []searchMatch
 	ResContentType []searchMatch
 	ResBody        []searchMatch
 }
 
-type searchMatch map[matchType]string
-
-type matchType int
-
-const (
-	negagteMatch matchType = iota
-	match
-)
-
-// type matchType string
-
-// const (
-// 	contain    matchType = "contain"
-// 	eq         matchType = "eq"
-// 	notEq      matchType = "notEq"
-// 	notContain matchType = "notContain"
-// )
+type searchMatch struct {
+	value    string
+	negative bool
+}
 
 type Search struct {
-	Config SearchConfig
-	Regexp SearchParams
+	Config   SearchConfig
+	Regexp   SearchParams
+	PHistory *parser.BrowseHistory
+	channel  chan parser.HistoryItem
+	Found    []parser.HistoryItem
 	// HelpMessage string
 }
 
+func (s *Search) cleanUp() {
+	s.Found = nil
+	s.Regexp = SearchParams{}
+}
+
 func (s *Search) InputHandler() {
+
+	s.cleanUp()
 
 	fmt.Print("Regexp Search. Type \"menu\" to get Search menu or \"exit\" to exit \n")
 
@@ -51,8 +48,10 @@ func (s *Search) InputHandler() {
 		handleMenu(s)
 	case "exit", "Exit", "EXIT":
 		return
+	case "":
 	default:
 		s.doSearch(input)
+		s.output()
 	}
 
 	s.InputHandler()

@@ -3,9 +3,7 @@ package parser
 import (
 	"encoding/base64"
 	"encoding/xml"
-	"fmt"
 	"io/ioutil"
-	"net/url"
 	"regexp"
 	"strings"
 )
@@ -93,44 +91,85 @@ func (p *XMLParser) Parse(filename string) error {
 
 // TODO: move to utils
 
-func getParams(i Item) string {
-	// divide request for headers and params
+type reqRes struct {
+	reqBody    string
+	reqHeaders string
+	resBody    string
+	resHeaders string
+	reqParams  string
+}
 
-	var parts []string
+func parseReqRes(i Item) reqRes {
+
+	var reqParts []string
+	var resParts []string
 
 	switch i.Method {
-	case "POST":
-		parts = strings.Split(i.Request.decodeBase64(), "\r\n\r\n")
+	case "POST", "PUT", "PATCH":
+		reqParts = strings.Split(i.Request.decodeBase64(), "\r\n\r\n")
 	case "GET":
-		parts = strings.Split(i.Path, "?")
-	default:
-		return ""
+		reqParts = strings.Split(i.Path, "?")
 	}
 
-	if len(parts) < 2 {
-		return ""
-	}
-	// fmt.Println(parts[1])
+	resParts = strings.Split(i.Response.decodeBase64(), "\r\n\r\n")
 
-	// Get elements from index 1 till the end of the list. (remove headers)
-	elements := parts[1:]
-
-	// Create a string by joining the elements with a separator
-	result := strings.Join(elements, " ")
-
-	if i.Method == "POST" {
-		return result
+	var rr reqRes = reqRes{
+		resHeaders: resParts[0],
+		reqHeaders: reqParts[0],
 	}
 
-	decodedString, err := url.QueryUnescape(result)
-	if err != nil {
-		fmt.Println("Error decoding URL:", err)
-		return ""
+	if len(resParts) > 1 {
+		rr.resBody = resParts[1]
 	}
 
-	return decodedString
+	if len(reqParts) > 1 && i.Method == "GET" {
+		//todo: refactor this. Parametes is used in Scaner.
+		rr.reqParams = reqParts[1]
+	} else if len(reqParts) > 1 {
+		rr.reqBody = reqParts[1]
+	}
 
+	return rr
 }
+
+// func getParams(i Item) string {
+// 	// divide request for headers and params
+
+// 	var parts []string
+
+// 	switch i.Method {
+// 	case "POST":
+// 		parts = strings.Split(i.Request.decodeBase64(), "\r\n\r\n")
+// 	case "GET":
+// 		parts = strings.Split(i.Path, "?")
+// 	default:
+// 		return ""
+// 	}
+
+// 	if len(parts) < 2 {
+// 		return ""
+// 	}
+// 	// fmt.Println(parts[1])
+
+// 	// Get elements from index 1 till the end of the list. (remove headers)
+// 	elements := parts[1:]
+
+// 	// Create a string by joining the elements with a separator
+// 	result := strings.Join(elements, " ")
+
+// 	if i.Method == "POST" {
+// 		return result
+// 	}
+
+// 	decodedString, err := url.QueryUnescape(result)
+// 	if err != nil {
+// 		fmt.Println("Error decoding URL:", err)
+// 		return ""
+// 	}
+
+// 	return decodedString
+
+// }
 
 // TODO: move to utils
 func getContentType(headerString string) string {
@@ -165,6 +204,8 @@ func (p *XMLParser) PopulateHistory(file string, history *BrowseHistory) error {
 			ReqContentType = getContentType(item.Request.decodeBase64())
 		}
 
+		var rr reqRes = parseReqRes(item)
+
 		history.RequestsList = append(history.RequestsList, HistoryItem{
 			Time:           item.Time,
 			URL:            item.URL,
@@ -176,7 +217,11 @@ func (p *XMLParser) PopulateHistory(file string, history *BrowseHistory) error {
 			ReqContentType: ReqContentType,
 			ResContentType: getContentType(item.Response.decodeBase64()),
 			Response:       item.Response.decodeBase64(),
-			Params:         getParams(item),
+			ReqHeaders:     rr.reqHeaders,
+			ResHeaders:     rr.resHeaders,
+			ReqBody:        rr.reqBody,
+			ResBody:        rr.resBody,
+			Params:         rr.reqParams,
 		})
 
 		history.ListOfHosts.Add(host)

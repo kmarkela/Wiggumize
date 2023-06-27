@@ -1,59 +1,112 @@
 package search
 
 import (
+	parser "Wiggumize/internal/trafficParser"
 	"fmt"
-	"strings"
-	"unicode"
+	"regexp"
+	"sync"
 )
 
-func parseNot(input string) (string, searchMatch) {
-
-	var sm searchMatch = searchMatch{}
-	match := matchType(1)
-	input = strings.TrimLeftFunc(input, unicode.IsSpace)
-
-	// TODO: refactor this
-	if strings.HasPrefix(input, "!") {
-		match = matchType(0)
-		// Remove !
-		input = strings.Split(input, "!")[1]
-		// remove spaces
-		input = strings.TrimLeftFunc(input, unicode.IsSpace)
-	}
-	var p []string = strings.Split(input, " ")
-
-	// ToDo: error handling. check if len(p) > 1
-	input = strings.Join(p[1:], " ")
-
-	sm[match] = input
-
-	return p[0], sm
-}
-
-func parseInput(input string) (error, SearchParams) {
-
-	var parseAnd []string
-	var sp SearchParams = SearchParams{}
-
-	parseAnd = strings.Split(input, "&")
-
-	for _, v := range parseAnd {
-
-		k, match := parseNot(v)
-		fmt.Println(k)
-		switch k {
-		case "ReqMethod":
-			sp.ReqMethod = append(sp.ReqMethod, match)
+func (s *Search) waitForResults() {
+	for {
+		select {
+		case msg := <-s.channel: // recived message
+			s.Found = append(s.Found, msg)
+		default:
+			// fmt.Println("asdsadasd")
 		}
 
 	}
-
-	return nil, sp
 }
 
 func (s *Search) doSearch(input string) {
 
-	_, s.Regexp = parseInput(input)
-	fmt.Println(s.Regexp)
+	// TODO: refactor with return instead for pointers
+	err := s.parseSearch(input)
 
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	var wg sync.WaitGroup
+	s.channel = make(chan parser.HistoryItem)
+
+	go s.waitForResults()
+
+	for _, item := range s.PHistory.RequestsList {
+
+		wg.Add(1) // add a worker to the waitgroup
+		go s.checkRegexp(item, &wg)
+
+	}
+
+	wg.Wait()
+
+}
+
+func (s *Search) checkRegexp(p parser.HistoryItem, wg *sync.WaitGroup) {
+	defer wg.Done() // signal that the worker has finished
+
+	if !regexMatch(s.Regexp.ReqMethod, p.Method, s.Config.CaseInsensitive) {
+		return
+	}
+
+	if !regexMatch(s.Regexp.ReqHeader, p.ReqHeaders, s.Config.CaseInsensitive) {
+		return
+	}
+
+	if !regexMatch(s.Regexp.ReqContentType, p.ReqContentType, s.Config.CaseInsensitive) {
+		return
+	}
+
+	if !regexMatch(s.Regexp.ReqBody, p.ReqBody, s.Config.CaseInsensitive) {
+		return
+	}
+
+	if !regexMatch(s.Regexp.ResHeader, p.ResHeaders, s.Config.CaseInsensitive) {
+		return
+	}
+
+	if !regexMatch(s.Regexp.ResContentType, p.ResContentType, s.Config.CaseInsensitive) {
+		return
+	}
+
+	if !regexMatch(s.Regexp.ResBody, p.ResBody, s.Config.CaseInsensitive) {
+		return
+	}
+	s.channel <- p
+}
+
+func regexMatch(m []searchMatch, st string, ci bool) bool {
+
+	// Case insesitive
+	var prefix string = ""
+	if ci {
+		prefix = "(?i)"
+	}
+
+	// No search rexexp
+	if len(m) == 0 {
+		return true
+	}
+
+	//empty Body
+	if len(st) == 0 {
+		return false
+	}
+
+	for _, v := range m {
+
+		match, _ := regexp.MatchString(prefix+v.value, st)
+
+		// fmt.Printf("Neg - %t, val - %s; Match - %t; String: \n%s \n\n\n", v.negative, v.value, match, st)
+
+		// Found Negative or doesn't find positive
+		if (match && v.negative) || (!match && !v.negative) {
+			return false
+		}
+	}
+
+	return true
 }

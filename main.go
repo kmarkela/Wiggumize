@@ -1,11 +1,13 @@
 package main
 
+// TODO: refactor. overuse of pointers.
+
 import (
 	"fmt"
 
 	"Wiggumize/cli"
 	scan "Wiggumize/internal/scanner"
-	search "Wiggumize/internal/search"
+	"Wiggumize/internal/search"
 	parser "Wiggumize/internal/trafficParser"
 	"Wiggumize/utils"
 )
@@ -29,11 +31,15 @@ func doScan(browseHistory *parser.BrowseHistory, hosts []string, output string) 
 	// fmt.Printf("Result saved to: %s\n", output)
 }
 
-func doSearch() {
-	searcher := search.Search{}
+func doSearch(bh *parser.BrowseHistory) {
+	searcher := search.Search{
+		PHistory: bh,
+	}
 	searcher.Config.Output = "reqOnly"
 
 	searcher.InputHandler()
+
+	// search.SearchInputHandler(bh)
 
 }
 
@@ -86,7 +92,7 @@ func main() {
 	case "scan":
 		doScan(browseHistory, scopeHosts.Keys(), params.Output)
 	case "search":
-		doSearch()
+		doSearch(browseHistory)
 
 	}
 

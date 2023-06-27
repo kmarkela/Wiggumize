@@ -16,9 +16,13 @@ type HistoryItem struct {
 	Path           string
 	Method         string
 	Request        string
+	ReqHeaders     string
+	ReqBody        string
 	Status         string
 	ReqContentType string
 	Response       string
+	ResHeaders     string
+	ResBody        string
 	ResContentType string
 	Params         string
 }
