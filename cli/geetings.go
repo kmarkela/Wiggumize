@@ -4,6 +4,8 @@ import (
 	"github.com/fatih/color"
 )
 
+// TODo: refactor: colors
+
 func header() {
 
 	nameASCIIFirst := `
