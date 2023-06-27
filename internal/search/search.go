@@ -37,6 +37,8 @@ func (s *Search) cleanUp() {
 
 func (s *Search) InputHandler() {
 
+	// TODO: add history adn up arrow
+
 	s.cleanUp()
 
 	fmt.Print("Regexp Search. Type \"menu\" to get Search menu or \"exit\" to exit \n")
