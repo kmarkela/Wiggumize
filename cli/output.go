@@ -93,6 +93,8 @@ func OutputToMD(scanner *scan.Scanner, scope []string, filename string) error {
 
 	file.WriteString(content)
 
+	fmt.Printf("Result saved to: %s\n", filename)
+
 	return nil
 
 }

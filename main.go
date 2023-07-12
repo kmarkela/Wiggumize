@@ -1,13 +1,47 @@
 package main
 
+// TODO: refactor. overuse of pointers.
+
 import (
 	"fmt"
 
 	"Wiggumize/cli"
 	scan "Wiggumize/internal/scanner"
+	"Wiggumize/internal/search"
 	parser "Wiggumize/internal/trafficParser"
 	"Wiggumize/utils"
 )
+
+func doScan(browseHistory *parser.BrowseHistory, hosts []string, output string) {
+
+	scanner, err := scan.SannerBuilder()
+	if err != nil {
+		fmt.Println("Cannot Start Scanner!", err)
+		return
+	}
+
+	scanner.RunAllChecks(browseHistory)
+
+	err = cli.OutputToMD(scanner, hosts, output)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// fmt.Printf("Result saved to: %s\n", output)
+}
+
+func doSearch(bh *parser.BrowseHistory) {
+	searcher := search.Search{
+		PHistory: bh,
+	}
+	searcher.Config.Output = "reqOnly"
+
+	searcher.InputHandler()
+
+	// search.SearchInputHandler(bh)
+
+}
 
 func main() {
 
@@ -54,20 +88,12 @@ func main() {
 	scopeHosts := cli.Checkboxes("Choose hosts in Scope:", browseHistory.ListOfHosts.Keys())
 	browseHistory.FilterByHost(scopeHosts)
 
-	scanner, err := scan.SannerBuilder()
-	if err != nil {
-		fmt.Println("Cannot Start Scanner!", err)
-		return
+	switch params.Action {
+	case "scan":
+		doScan(browseHistory, scopeHosts.Keys(), params.Output)
+	case "search":
+		doSearch(browseHistory)
+
 	}
-
-	scanner.RunAllChecks(browseHistory)
-
-	err = cli.OutputToMD(scanner, scopeHosts.Keys(), params.Output)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	fmt.Printf("Result saved to: %s\n", params.Output)
 
 }

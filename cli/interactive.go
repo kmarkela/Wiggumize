@@ -22,3 +22,27 @@ func Checkboxes(label string, opts []string) utils.Set {
 
 	return hostSet
 }
+
+func GetString(msg string) string {
+	s := ""
+	prompt := &survey.Input{
+		Message: msg,
+	}
+	survey.AskOne(prompt, &s)
+
+	return s
+}
+
+func GetSelect(msg string, opts []string, def string) string {
+
+	s := ""
+	prompt := &survey.Select{
+		Message: msg,
+		Options: opts,
+		Default: def,
+	}
+	survey.AskOne(prompt, &s)
+
+	return s
+
+}

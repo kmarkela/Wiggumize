@@ -135,17 +135,6 @@ func (s *Scanner) waitForResults() {
 	}
 }
 
-// func (s *Scanner) waitForParams() {
-// 	for {
-// 		select {
-// 		case msg := <-s.chanalParams: // recived message
-// 			s.Results[msg.checkName] = append(s.Results[msg.checkName], msg.Findings...)
-// 		default:
-// 		}
-
-// 	}
-// }
-
 func (s *Scanner) RunAllChecks(b *parser.BrowseHistory) {
 
 	var wg sync.WaitGroup
