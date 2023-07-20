@@ -43,7 +43,7 @@ func (s *Search) InputHandler() {
 
 	fmt.Print("Regexp Search. Type \"menu\" to get Search menu or \"exit\" to exit \n")
 
-	input := cli.GetString("Type search quarry: ")
+	input := cli.GetString("Type search query: ")
 
 	switch input {
 	case "menu", "Menu", "MENU":

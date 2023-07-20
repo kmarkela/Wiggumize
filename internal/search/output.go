@@ -67,7 +67,7 @@ func (s *Search) output() {
 
 	cPrinter.AddAttributeString(cPrinter.Green, "Bold")
 	cPrinter.AddAttributeString(cPrinter.Cyan, "Underline")
-	cPrinter.Green.Printf("Found %d mathces.\n", len(s.Found))
+	cPrinter.Green.Printf("Found %d matches.\n", len(s.Found))
 	// cPrinter.Cyan.Printf(delimiter)
 
 	if len(s.Found) == 0 {
