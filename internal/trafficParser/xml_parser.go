@@ -3,6 +3,7 @@ package parser
 import (
 	"encoding/base64"
 	"encoding/xml"
+	"fmt"
 	"io/ioutil"
 	"regexp"
 	"strings"
@@ -99,7 +100,7 @@ type reqRes struct {
 	reqParams  string
 }
 
-func parseReqRes(i Item) reqRes {
+func parseReqRes(i Item) (reqRes, error) {
 
 	var reqParts []string
 	var resParts []string
@@ -109,6 +110,8 @@ func parseReqRes(i Item) reqRes {
 		reqParts = strings.Split(i.Request.decodeBase64(), "\r\n\r\n")
 	case "GET":
 		reqParts = strings.Split(i.Path, "?")
+	default:
+		return reqRes{}, fmt.Errorf("%s req is not parsed", i.Method)
 	}
 
 	resParts = strings.Split(i.Response.decodeBase64(), "\r\n\r\n")
@@ -129,7 +132,7 @@ func parseReqRes(i Item) reqRes {
 		rr.reqBody = reqParts[1]
 	}
 
-	return rr
+	return rr, nil
 }
 
 // func getParams(i Item) string {
@@ -204,7 +207,8 @@ func (p *XMLParser) PopulateHistory(file string, history *BrowseHistory) error {
 			ReqContentType = getContentType(item.Request.decodeBase64())
 		}
 
-		var rr reqRes = parseReqRes(item)
+		// TODO; err handling
+		rr, _ := parseReqRes(item)
 
 		history.RequestsList = append(history.RequestsList, HistoryItem{
 			Time:           item.Time,
