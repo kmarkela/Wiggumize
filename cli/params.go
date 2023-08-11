@@ -15,7 +15,7 @@ type Parameters struct {
 
 func (p *Parameters) Parse() {
 	flag.StringVar(&p.FilePath, "f", "", "path to XML file with burp history")
-	flag.StringVar(&p.Output, "o", "retport.md", "path to output")
+	flag.StringVar(&p.Output, "o", "report.md", "path to output")
 	flag.StringVar(&p.Action, "a", "scan", "Action. scan/search")
 	flag.Parse()
 
@@ -26,7 +26,7 @@ func (p *Parameters) Parse() {
 		os.Exit(1)
 	}
 
-	// make it case insesitive
+	// make it case insesnitive
 	p.Action = strings.ToLower(p.Action)
 
 }
