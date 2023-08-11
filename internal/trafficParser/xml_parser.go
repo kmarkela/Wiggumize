@@ -4,9 +4,10 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"regexp"
 	"strings"
+	"time"
 )
 
 // XMLParser is a struct that represents the XML parser.
@@ -75,17 +76,21 @@ func (r Response) decodeBase64() string {
 
 // Parse is a method that parses an XML file.
 func (p *XMLParser) Parse(filename string) error {
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		return err
 	}
-
+	defer data.Close()
+	dt := time.Now()
+	fmt.Println("Parse 1 : ", dt.String())
 	// TODO: takes a few seconds! needs to be looked at
 	// Use the xml.Unmarshal() function to parse the XML data.
 	err = xml.Unmarshal(data, &p)
 	if err != nil {
 		return err
 	}
+	dt = time.Now()
+	fmt.Println("Parse 2 : ", dt.String())
 
 	return nil
 }
@@ -191,7 +196,8 @@ func getContentType(headerString string) string {
 
 func (p *XMLParser) PopulateHistory(file string, history *BrowseHistory) error {
 	// Parsing XML history and populating BrowseHistory struct
-
+	dt := time.Now()
+	fmt.Println("PopulateHistory: ", dt.String())
 	// Parser XML file and polulate XMLParser
 	err := p.Parse(file)
 	if err != nil {
