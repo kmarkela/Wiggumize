@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -13,27 +13,27 @@ import (
 //type XMLParser struct{}
 
 type XMLParser struct {
-	XMLName      xml.Name `xml:"items"`
-	BurpVersion  string   `xml:"burpVersion,attr"`
-	ExportTime   string   `xml:"exportTime,attr"`
-	ItemElements []Item   `xml:"item"`
+	XMLName xml.Name `xml:"items"`
+	// BurpVersion  string   `xml:"burpVersion,attr"`
+	// ExportTime   string   `xml:"exportTime,attr"`
+	ItemElements []Item `xml:"item"`
 }
 
 type Item struct {
-	Time           string   `xml:"time"`
-	URL            string   `xml:"url"`
-	Host           Host     `xml:"host"`
-	Port           string   `xml:"port"`
-	Protocol       string   `xml:"protocol"`
-	Method         string   `xml:"method"`
-	Path           string   `xml:"path"`
-	Extension      string   `xml:"extension"`
-	Request        Request  `xml:"request"`
-	Status         string   `xml:"status"`
-	ResponseLength string   `xml:"responselength"`
-	MimeType       string   `xml:"mimetype"`
-	Response       Response `xml:"response"`
-	Comment        string   `xml:"comment"`
+	Time     string `xml:"time"`
+	URL      string `xml:"url"`
+	Host     Host   `xml:"host"`
+	Port     string `xml:"port"`
+	Protocol string `xml:"protocol"`
+	Method   string `xml:"method"`
+	Path     string `xml:"path"`
+	// Extension      string   `xml:"extension"`
+	Request Request `xml:"request"`
+	Status  string  `xml:"status"`
+	// ResponseLength string   `xml:"responselength"`
+	MimeType string   `xml:"mimetype"`
+	Response Response `xml:"response"`
+	// Comment        string   `xml:"comment"`
 }
 
 type Host struct {
@@ -75,7 +75,7 @@ func (r Response) decodeBase64() string {
 
 // Parse is a method that parses an XML file.
 func (p *XMLParser) Parse(filename string) error {
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		return err
 	}
@@ -135,45 +135,6 @@ func parseReqRes(i Item) (reqRes, error) {
 	return rr, nil
 }
 
-// func getParams(i Item) string {
-// 	// divide request for headers and params
-
-// 	var parts []string
-
-// 	switch i.Method {
-// 	case "POST":
-// 		parts = strings.Split(i.Request.decodeBase64(), "\r\n\r\n")
-// 	case "GET":
-// 		parts = strings.Split(i.Path, "?")
-// 	default:
-// 		return ""
-// 	}
-
-// 	if len(parts) < 2 {
-// 		return ""
-// 	}
-// 	// fmt.Println(parts[1])
-
-// 	// Get elements from index 1 till the end of the list. (remove headers)
-// 	elements := parts[1:]
-
-// 	// Create a string by joining the elements with a separator
-// 	result := strings.Join(elements, " ")
-
-// 	if i.Method == "POST" {
-// 		return result
-// 	}
-
-// 	decodedString, err := url.QueryUnescape(result)
-// 	if err != nil {
-// 		fmt.Println("Error decoding URL:", err)
-// 		return ""
-// 	}
-
-// 	return decodedString
-
-// }
-
 // TODO: move to utils
 func getContentType(headerString string) string {
 	lines := strings.Split(headerString, "\n")
@@ -191,7 +152,6 @@ func getContentType(headerString string) string {
 
 func (p *XMLParser) PopulateHistory(file string, history *BrowseHistory) error {
 	// Parsing XML history and populating BrowseHistory struct
-
 	// Parser XML file and polulate XMLParser
 	err := p.Parse(file)
 	if err != nil {
