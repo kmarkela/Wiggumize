@@ -31,6 +31,9 @@ func parseGETParams(params string) Param {
 
 	for _, p := range paramsList {
 		param := strings.Split(p, "=")
+		if len(param) < 2 {
+			continue
+		}
 		returnParams[param[0]] = param[1]
 	}
 
